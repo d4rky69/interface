@@ -241,9 +241,10 @@
     <div class="container">
         <div class="content-wrapper">
             <div class="video-container">
-                <!-- Replace the src with your actual video file path -->
-                <video id="navaratri-video" poster="https://d4rky69.github.io/Saraswati-Pooja/">
-                    <source src="your-video.mp4" type="video/mp4">
+                <!-- Using a placeholder image for the poster instead of a website URL -->
+                <video id="navaratri-video" poster="images/navaratri-poster.jpg">
+                    <!-- Replace with actual video path when available -->
+                    <source src="videos/navaratri-celebration.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
                 <div class="video-controls">
@@ -276,11 +277,15 @@
         // Redirect button functionality
         const redirectBtn = document.getElementById('redirectBtn');
         redirectBtn.addEventListener('click', () => {
-            // Replace with your desired redirect URL
+            // This already correctly points to the requested URL
             window.location.href = 'https://d4rky69.github.io/Saraswati-Pooja/';
+        });
+
+        // Error handling for video
+        video.addEventListener('error', function() {
+            console.log('Error loading video');
+            // Fallback functionality if needed
         });
     </script>
 </body>
-
 </html>
-
