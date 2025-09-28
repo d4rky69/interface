@@ -219,12 +219,13 @@
             opacity: 1;
         }
 
-        .play-pause-btn {
+        .play-pause-btn, .mute-btn {
             background: none;
             border: none;
             color: white;
             font-size: 1.2rem;
             cursor: pointer;
+            margin-right: 10px;
         }
 
         /* Video Instruction Popup */
@@ -271,14 +272,15 @@
         <div class="content-wrapper">
             <div class="video-container" id="videoWrapper">
                 <div class="video-instruction" id="videoInstruction">Tap to play video</div>
-                <!-- Using a placeholder image for the poster instead of a website URL -->
-                <video id="navaratri-video" poster="images/navaratri-poster.jpg" muted>
+                <!-- Removed the muted attribute to make video play with sound by default -->
+                <video id="navaratri-video" poster="images/navaratri-poster.jpg">
                     <!-- Replace with actual video path when available -->
                     <source src="videos/navaratri-celebration.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
                 <div class="video-controls">
                     <button class="play-pause-btn" id="playPauseBtn">▶</button>
+                    <button class="mute-btn" id="muteBtn">🔊</button>
                 </div>
             </div>
             
@@ -293,6 +295,7 @@
         // Video elements
         const video = document.getElementById('navaratri-video');
         const playPauseBtn = document.getElementById('playPauseBtn');
+        const muteBtn = document.getElementById('muteBtn');
         const videoWrapper = document.getElementById('videoWrapper');
         const videoInstruction = document.getElementById('videoInstruction');
 
@@ -313,7 +316,7 @@
         // Make the entire video area clickable to play/pause
         videoWrapper.addEventListener('click', function(e) {
             // Don't trigger if clicking on the controls
-            if (e.target === playPauseBtn) return;
+            if (e.target === playPauseBtn || e.target === muteBtn) return;
             
             togglePlayPause();
         });
@@ -322,6 +325,12 @@
         playPauseBtn.addEventListener('click', function(e) {
             e.stopPropagation(); // Prevent the wrapper click from triggering
             togglePlayPause();
+        });
+
+        // Mute button functionality
+        muteBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent the wrapper click from triggering
+            toggleMute();
         });
 
         function togglePlayPause() {
@@ -333,6 +342,11 @@
                 video.pause();
                 playPauseBtn.textContent = '▶';
             }
+        }
+
+        function toggleMute() {
+            video.muted = !video.muted;
+            muteBtn.textContent = video.muted ? '🔇' : '🔊';
         }
 
         // Hide instruction after playing
