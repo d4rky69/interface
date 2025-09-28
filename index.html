@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navaratri Celebration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF5C8D;
+            --secondary-color: #FFB86C;
+            --accent-color: #6A0572;
+            --background: #121212;
+            --text-light: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background decoration */
+        .background-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .decoration-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .circle-1 {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            width: 70vmin;
+            height: 70vmin;
+            top: -20vmin;
+            right: -20vmin;
+        }
+
+        .circle-2 {
+            background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+            width: 50vmin;
+            height: 50vmin;
+            bottom: -10vmin;
+            left: -10vmin;
+        }
+
+        /* Header styles */
+        header {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 8px;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        }
+
+        .subheading {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        /* Main content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Video container */
+        .video-container {
+            flex: 1.5;
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        video {
+            width: 100%;
+            display: block;
+            border-radius: 16px;
+        }
+
+        /* Button container */
+        .button-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .redirect-button {
+            position: relative;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-light);
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(106, 5, 114, 0.3);
+            z-index: 1;
+        }
+
+        .redirect-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+
+        .redirect-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(106, 5, 114, 0.4);
+        }
+
+        .redirect-button:hover::before {
+            opacity: 1;
+        }
+
+        .button-description {
+            text-align: center;
+            max-width: 300px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .button-container {
+                margin-top: 2rem;
+            }
+        }
+
+        /* Custom video controls */
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-container:hover .video-controls {
+            opacity: 1;
+        }
+
+        .play-pause-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-decoration">
+        <div class="decoration-circle circle-1"></div>
+        <div class="decoration-circle circle-2"></div>
+    </div>
+
+    <header>
+        <h1>NAVARATRI</h1>
+        <p class="subheading">Celebrate the Divine Feminine Power</p>
+    </header>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="video-container">
+                <!-- Replace the src with your actual video file path -->
+                <video id="navaratri-video" poster="https://via.placeholder.com/800x450/121212/FF5C8D/?text=Navaratri+Celebration">
+                    <source src="your-video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-controls">
+                    <button class="play-pause-btn" id="playPauseBtn">▶</button>
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <button class="redirect-button" id="redirectBtn">Join Celebration</button>
+                <p class="button-description">Click the button to join our virtual Navaratri celebration and connect with devotees worldwide.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Video controls
+        const video = document.getElementById('navaratri-video');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+
+        playPauseBtn.addEventListener('click', () => {
+            if (video.paused) {
+                video.play();
+                playPauseBtn.textContent = '❚❚';
+            } else {
+                video.pause();
+                playPauseBtn.textContent = '▶';
+            }
+        });
+
+        // Redirect button functionality
+        const redirectBtn = document.getElementById('redirectBtn');
+        redirectBtn.addEventListener('click', () => {
+            // Replace with your desired redirect URL
+            window.location.href = 'https://your-redirect-link.com';
+        });
+    </script>
+</body>
+</html>
