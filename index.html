@@ -122,6 +122,7 @@
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
         }
 
         video {
@@ -225,6 +226,34 @@
             font-size: 1.2rem;
             cursor: pointer;
         }
+
+        /* Video Instruction Popup */
+        .video-instruction {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .hidden {
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
@@ -240,15 +269,16 @@
 
     <div class="container">
         <div class="content-wrapper">
-            <div class="video-container">
-                <!-- Added autoplay and muted attributes to make autoplay work in modern browsers -->
-                <video id="navaratri-video" poster="images/navaratri-poster.jpg" autoplay muted>
+            <div class="video-container" id="videoWrapper">
+                <div class="video-instruction" id="videoInstruction">Tap to play video</div>
+                <!-- Using a placeholder image for the poster instead of a website URL -->
+                <video id="navaratri-video" poster="images/navaratri-poster.jpg" muted>
                     <!-- Replace with actual video path when available -->
                     <source src="videos/navaratri-celebration.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
                 <div class="video-controls">
-                    <button class="play-pause-btn" id="playPauseBtn">❚❚</button>
+                    <button class="play-pause-btn" id="playPauseBtn">▶</button>
                 </div>
             </div>
             
@@ -260,27 +290,59 @@
     </div>
 
     <script>
-        // Video controls
+        // Video elements
         const video = document.getElementById('navaratri-video');
         const playPauseBtn = document.getElementById('playPauseBtn');
+        const videoWrapper = document.getElementById('videoWrapper');
+        const videoInstruction = document.getElementById('videoInstruction');
 
-        // Since video is set to autoplay, update the play/pause button to show pause
-        playPauseBtn.textContent = '❚❚';
+        // Try to autoplay the video when page loads
+        window.addEventListener('load', function() {
+            // Attempt autoplay (may be blocked by browser policies)
+            video.play().then(() => {
+                // If autoplay works, hide the instruction and update button
+                videoInstruction.classList.add('hidden');
+                playPauseBtn.textContent = '❚❚';
+            }).catch(error => {
+                // If autoplay is blocked, show the instruction
+                console.log('Autoplay prevented:', error);
+                videoInstruction.classList.remove('hidden');
+            });
+        });
 
-        playPauseBtn.addEventListener('click', () => {
+        // Make the entire video area clickable to play/pause
+        videoWrapper.addEventListener('click', function(e) {
+            // Don't trigger if clicking on the controls
+            if (e.target === playPauseBtn) return;
+            
+            togglePlayPause();
+        });
+
+        // Control button functionality
+        playPauseBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent the wrapper click from triggering
+            togglePlayPause();
+        });
+
+        function togglePlayPause() {
             if (video.paused) {
                 video.play();
                 playPauseBtn.textContent = '❚❚';
+                videoInstruction.classList.add('hidden');
             } else {
                 video.pause();
                 playPauseBtn.textContent = '▶';
             }
+        }
+
+        // Hide instruction after playing
+        video.addEventListener('play', function() {
+            videoInstruction.classList.add('hidden');
         });
 
         // Redirect button functionality
         const redirectBtn = document.getElementById('redirectBtn');
         redirectBtn.addEventListener('click', () => {
-            // Updated to the correct URL with underscore instead of hyphen
             window.location.href = 'https://d4rky69.github.io/Saraswati_Pooja/';
         });
 
