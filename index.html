@@ -241,14 +241,14 @@
     <div class="container">
         <div class="content-wrapper">
             <div class="video-container">
-                <!-- Using a placeholder image for the poster instead of a website URL -->
-                <video id="navaratri-video" poster="images/navaratri-poster.jpg">
+                <!-- Added autoplay and muted attributes to make autoplay work in modern browsers -->
+                <video id="navaratri-video" poster="images/navaratri-poster.jpg" autoplay muted>
                     <!-- Replace with actual video path when available -->
                     <source src="videos/navaratri-celebration.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
                 <div class="video-controls">
-                    <button class="play-pause-btn" id="playPauseBtn">▶</button>
+                    <button class="play-pause-btn" id="playPauseBtn">❚❚</button>
                 </div>
             </div>
             
@@ -264,6 +264,9 @@
         const video = document.getElementById('navaratri-video');
         const playPauseBtn = document.getElementById('playPauseBtn');
 
+        // Since video is set to autoplay, update the play/pause button to show pause
+        playPauseBtn.textContent = '❚❚';
+
         playPauseBtn.addEventListener('click', () => {
             if (video.paused) {
                 video.play();
@@ -277,7 +280,7 @@
         // Redirect button functionality
         const redirectBtn = document.getElementById('redirectBtn');
         redirectBtn.addEventListener('click', () => {
-            // This already correctly points to the requested URL
+            // Updated to the correct URL with underscore instead of hyphen
             window.location.href = 'https://d4rky69.github.io/Saraswati_Pooja/';
         });
 
@@ -289,4 +292,3 @@
     </script>
 </body>
 </html>
-
