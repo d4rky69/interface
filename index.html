@@ -225,7 +225,7 @@
             margin-bottom: 8px;
         }
 
-        .play-pause-btn, .mute-btn {
+        .play-pause-btn, .mute-btn, .fullscreen-btn {
             background: none;
             border: none;
             color: white;
@@ -305,6 +305,32 @@
             animation: pulse 2s infinite;
         }
 
+        /* Double-tap instruction popup */
+        .double-tap-instruction {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+            animation: fadeInOut 4s forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
         @keyframes pulse {
             0% { transform: translate(-50%, -50%) scale(1); }
             50% { transform: translate(-50%, -50%) scale(1.05); }
@@ -331,6 +357,7 @@
         <div class="content-wrapper">
             <div class="video-container" id="videoWrapper">
                 <div class="video-instruction" id="videoInstruction">Tap to play video</div>
+                <div class="double-tap-instruction" id="doubleTapInstruction">Double-tap for fullscreen</div>
                 <!-- Removed the muted attribute to make video play with sound by default -->
                 <video id="navaratri-video" poster="images/navaratri-poster.jpg">
                     <!-- Replace with actual video path when available -->
@@ -348,6 +375,7 @@
                             </div>
                             <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
                         </div>
+                        <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
                     </div>
                 </div>
             </div>
@@ -366,6 +394,8 @@
         const muteBtn = document.getElementById('muteBtn');
         const videoWrapper = document.getElementById('videoWrapper');
         const videoInstruction = document.getElementById('videoInstruction');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const doubleTapInstruction = document.getElementById('doubleTapInstruction');
         
         // Progress bar elements
         const progressBar = document.getElementById('progressBar');
@@ -398,6 +428,63 @@
             video.currentTime = pos * video.duration;
         }
 
+        // Fullscreen functionality
+        function toggleFullScreen() {
+            if (document.fullscreenElement) {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                fullscreenBtn.textContent = '⛶';
+            } else {
+                // Enter fullscreen
+                if (videoWrapper.requestFullscreen) {
+                    videoWrapper.requestFullscreen();
+                } else if (videoWrapper.webkitRequestFullscreen) {
+                    videoWrapper.webkitRequestFullscreen();
+                } else if (videoWrapper.mozRequestFullScreen) {
+                    videoWrapper.mozRequestFullScreen();
+                } else if (videoWrapper.msRequestFullscreen) {
+                    videoWrapper.msRequestFullscreen();
+                }
+                fullscreenBtn.textContent = '⮌';
+            }
+        }
+
+        // Double tap detection
+        let lastTap = 0;
+        let tapTimeout;
+
+        function handleDoubleTap(e) {
+            // Don't trigger if clicking on the controls
+            if (e.target === playPauseBtn || e.target === muteBtn || 
+                progressBar.contains(e.target) || e.target === timeDisplay ||
+                e.target === fullscreenBtn) return;
+            
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            clearTimeout(tapTimeout);
+            
+            if (tapLength < 500 && tapLength > 0) {
+                // Double tap detected
+                toggleFullScreen();
+                e.preventDefault();
+            } else {
+                // Single tap
+                tapTimeout = setTimeout(() => {
+                    // This is a single tap - handle play/pause
+                }, 500);
+            }
+            
+            lastTap = currentTime;
+        }
+
         // Add event listeners for progress bar
         progressBar.addEventListener('click', setVideoProgress);
         
@@ -411,6 +498,11 @@
 
         // Try to autoplay the video when page loads
         window.addEventListener('load', function() {
+            // Show double-tap instruction
+            setTimeout(() => {
+                doubleTapInstruction.style.opacity = '1';
+            }, 2000);
+
             // Attempt autoplay (may be blocked by browser policies)
             video.play().then(() => {
                 // If autoplay works, hide the instruction and update button
@@ -427,9 +519,20 @@
         videoWrapper.addEventListener('click', function(e) {
             // Don't trigger if clicking on the controls
             if (e.target === playPauseBtn || e.target === muteBtn || 
-                progressBar.contains(e.target) || e.target === timeDisplay) return;
+                progressBar.contains(e.target) || e.target === timeDisplay ||
+                e.target === fullscreenBtn) return;
             
             togglePlayPause();
+        });
+
+        // Add double-tap detection
+        videoWrapper.addEventListener('touchend', handleDoubleTap);
+        videoWrapper.addEventListener('click', handleDoubleTap);
+
+        // Fullscreen button functionality
+        fullscreenBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent the wrapper click from triggering
+            toggleFullScreen();
         });
 
         // Control button functionality
@@ -464,6 +567,20 @@
         video.addEventListener('play', function() {
             videoInstruction.classList.add('hidden');
         });
+
+        // Update fullscreen button when fullscreen state changes
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+
+        function updateFullscreenButton() {
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = '⮌';
+            } else {
+                fullscreenBtn.textContent = '⛶';
+            }
+        }
 
         // Redirect button functionality
         const redirectBtn = document.getElementById('redirectBtn');
